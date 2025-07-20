@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efeito de Texto Vazando</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Montserrat:wght@300&display=swap');
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0f0f1a;
+            color: white;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        
+        /* Efeito de texto vazando */
+        .text-mask {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .text-mask::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #3a0ca3, #4cc9f0);
+            mix-blend-mode: screen;
+            z-index: 2;
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80') center/cover;
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        .main-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+            color: transparent;
+            position: relative;
+        }
+        
+        .subtitle {
+            font-weight: 300;
+            letter-spacing: 0.5rem;
+            text-transform: uppercase;
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            opacity: 0;
+        }
+
+        /* Novas seções horizontais */
+        .horizontal-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .horizontal-wrapper {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            padding-left: 10vw;
+            will-change: transform;
+        }
+
+        .horizontal-item {
+            flex: 0 0 auto;
+            width: 100vw;
+            padding-right: 10vw;
+        }
+
+        .horizontal-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.9;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+            color: transparent;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .horizontal-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        /* Cores diferentes para cada seção */
+        .section-1 .text-mask::before {
+            background: linear-gradient(90deg, #f72585, #7209b7);
+        }
+
+        .section-2 .text-mask::before {
+            background: linear-gradient(90deg, #f8961e, #f94144);
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1 class="main-title">
+                <span class="text-mask">Breathtaking</span>
+            </h1>
+            <p class="subtitle">Every pixel perfected</p>
+        </div>
+    </div>
+
+    <section class="horizontal-section section-1">
+        <div class="horizontal-bg" style="background-image: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80')"></div>
+        <div class="horizontal-wrapper">
+            <div class="horizontal-item">
+                <h2 class="horizontal-title">
+                    <span class="text-mask">Immersive</span>
+                </h2>
+            </div>
+            <div class="horizontal-item">
+                <h2 class="horizontal-title">
+                    <span class="text-mask">Experience</span>
+                </h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="horizontal-section section-2">
+        <div class="horizontal-bg" style="background-image: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80')"></div>
+        <div class="horizontal-wrapper">
+            <div class="horizontal-item">
+                <h2 class="horizontal-title">
+                    <span class="text-mask">Creative</span>
+                </h2>
+            </div>
+            <div class="horizontal-item">
+                <h2 class="horizontal-title">
+                    <span class="text-mask">Solutions</span>
+                </h2>
+            </div>
+        </div>
+    </section>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Timeline principal
+        const master = gsap.timeline();
+        
+        // 1. Animação da máscara de gradiente
+        master.from(".hero .text-mask::before", {
+            width: 0,
+            duration: 2,
+            ease: "power4.inOut"
+        });
+        
+        // 2. Animação do texto principal
+        master.to(".hero .main-title", {
+            "-webkit-text-stroke": "1px rgba(255,255,255,0)",
+            color: "white",
+            duration: 1.5,
+            ease: "power2.out"
+        }, "<"); // Animação simultânea
+        
+        // 3. Animação do subtítulo
+        master.from(".hero .subtitle", {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            ease: "elastic.out(1, 0.5)"
+        }, "-=1"); // Começa 1s antes do fim
+        
+        // Efeito parallax no background
+        gsap.to(".hero-bg", {
+            y: "-20%",
+            scrollTrigger: {
+                trigger: ".hero",
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+        
+        // Efeito letra por letra
+        const textMask = document.querySelector(".hero .text-mask");
+        textMask.innerHTML = textMask.textContent.split('').map(letter => 
+            `<span style="display:inline-block;">${letter === ' ' ? '&nbsp;' : letter}</span>`
+        ).join('');
+        
+        gsap.from(".hero .text-mask span", {
+            y: "100%",
+            opacity: 0,
+            duration: 0.5,
+            stagger: 0.05,
+            ease: "back.out(3)",
+            delay: 0.5
+        });
+
+        // Configuração das seções horizontais
+        document.querySelectorAll('.horizontal-section').forEach((section, index) => {
+            const wrapper = section.querySelector('.horizontal-wrapper');
+            const items = section.querySelectorAll('.horizontal-item');
+            const textMasks = section.querySelectorAll('.text-mask');
+            
+            // Configura o efeito de scroll horizontal
+            gsap.to(wrapper, {
+                x: () => -(wrapper.scrollWidth - document.documentElement.clientWidth) + "px",
+                ease: "none",
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top top",
+                    end: () => "+=" + (wrapper.scrollWidth - document.documentElement.clientWidth),
+                    pin: true,
+                    scrub: 1,
+                    invalidateOnRefresh: true
+                }
+            });
+            
+            // Configura o efeito de texto para cada palavra
+            items.forEach((item, i) => {
+                // Efeito letra por letra
+                const mask = item.querySelector('.text-mask');
+                mask.innerHTML = mask.textContent.split('').map(letter => 
+                    `<span style="display:inline-block;">${letter === ' ' ? '&nbsp;' : letter}</span>`
+                ).join('');
+                
+                // Animação do texto
+                ScrollTrigger.create({
+                    trigger: item,
+                    start: "left 75%",
+                    onEnter: () => animateText(item),
+                    once: true
+                });
+            });
+            
+            // Função para animar o texto
+            function animateText(item) {
+                const mask = item.querySelector('.text-mask');
+                const letters = mask.querySelectorAll('span');
+                
+                // Timeline para a animação
+                const tl = gsap.timeline();
+                
+                tl.fromTo(mask.querySelector('::before'), {
+                    width: 0
+                }, {
+                    width: '100%',
+                    duration: 1.5,
+                    ease: "power4.inOut"
+                });
+                
+                tl.to(item.querySelector('.horizontal-title'), {
+                    "-webkit-text-stroke": "1px rgba(255,255,255,0)",
+                    color: "white",
+                    duration: 1,
+                    ease: "power2.out"
+                }, "-=1");
+                
+                tl.from(letters, {
+                    y: "100%",
+                    opacity: 0,
+                    duration: 0.5,
+                    stagger: 0.05,
+                    ease: "back.out(3)"
+                }, "-=0.5");
+            }
+        });
+    </script>
+</body>
+</html>

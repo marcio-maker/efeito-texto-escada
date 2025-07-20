@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Efeito de Texto Vazando</title>
+    <title>Efeito de Texto Vazando - Auto Scroll</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Montserrat:wght@300&display=swap');
         
@@ -18,7 +18,35 @@
             background: #0f0f1a;
             color: white;
             overflow-x: hidden;
+        }
+        
+        /* Container principal horizontal */
+        .horizontal-scroll {
+            display: flex;
             height: 100vh;
+            overflow-y: hidden;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            scrollbar-width: none; /* Esconde a barra de scroll no Firefox */
+            -ms-overflow-style: none; /* Esconde a barra de scroll no IE/Edge */
+        }
+        
+        /* Esconde a barra de scroll no Chrome/Safari */
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Seções individuais */
+        .section {
+            flex: 0 0 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            position: relative;
+            padding: 0 10vw;
         }
         
         /* Efeito de texto vazando */
@@ -39,85 +67,29 @@
             z-index: 2;
         }
         
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80') center/cover;
-            opacity: 0.3;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 0 20px;
-        }
-        
+        /* Estilo do título principal */
         .main-title {
             font-family: 'Poppins', sans-serif;
             font-weight: 700;
             font-size: clamp(3rem, 10vw, 8rem);
             line-height: 0.9;
-            margin-bottom: 2rem;
             -webkit-text-stroke: 1px rgba(255,255,255,0.3);
             color: transparent;
             position: relative;
         }
         
+        /* Subtítulo */
         .subtitle {
             font-weight: 300;
             letter-spacing: 0.5rem;
             text-transform: uppercase;
             font-size: clamp(0.8rem, 2vw, 1.2rem);
+            margin-top: 2rem;
             opacity: 0;
         }
-
-        /* Novas seções horizontais */
-        .horizontal-section {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .horizontal-wrapper {
-            display: flex;
-            height: 100%;
-            align-items: center;
-            padding-left: 10vw;
-            will-change: transform;
-        }
-
-        .horizontal-item {
-            flex: 0 0 auto;
-            width: 100vw;
-            padding-right: 10vw;
-        }
-
-        .horizontal-title {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: clamp(3rem, 10vw, 8rem);
-            line-height: 0.9;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
-            color: transparent;
-            position: relative;
-            white-space: nowrap;
-        }
-
-        .horizontal-bg {
+        
+        /* Background das seções */
+        .section-bg {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -126,186 +98,370 @@
             opacity: 0.3;
             z-index: -1;
         }
-
+        
         /* Cores diferentes para cada seção */
         .section-1 .text-mask::before {
             background: linear-gradient(90deg, #f72585, #7209b7);
         }
-
+        
         .section-2 .text-mask::before {
             background: linear-gradient(90deg, #f8961e, #f94144);
+        }
+        
+        .section-3 .text-mask::before {
+            background: linear-gradient(90deg, #43aa8b, #90be6d);
+        }
+        
+        /* Indicadores de scroll */
+        .scroll-indicators {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator.active {
+            background: white;
+            transform: scale(1.2);
+        }
+        
+        /* Controles de navegação */
+        .nav-controls {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+        
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+        
+        /* Pausar/play */
+        .pause-play {
+            position: fixed;
+            left: 2rem;
+            bottom: 2rem;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <h1 class="main-title">
-                <span class="text-mask">Breathtaking</span>
-            </h1>
-            <p class="subtitle">Every pixel perfected</p>
+    <div class="horizontal-scroll" id="scroller">
+        <!-- Seção 1 -->
+        <section class="section section-1">
+            <div class="section-bg" style="background-image: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80')"></div>
+            <div class="section-content">
+                <h1 class="main-title">
+                    <span class="text-mask">Breathtaking</span>
+                </h1>
+                <p class="subtitle">Every pixel perfected</p>
+            </div>
+        </section>
+        
+        <!-- Seção 2 -->
+        <section class="section section-2">
+            <div class="section-bg" style="background-image: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80')"></div>
+            <div class="section-content">
+                <h1 class="main-title">
+                    <span class="text-mask">Immersive</span>
+                </h1>
+                <p class="subtitle">Deep engagement</p>
+            </div>
+        </section>
+        
+        <!-- Seção 3 -->
+        <section class="section section-3">
+            <div class="section-bg" style="background-image: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80')"></div>
+            <div class="section-content">
+                <h1 class="main-title">
+                    <span class="text-mask">Creative</span>
+                </h1>
+                <p class="subtitle">Boundless ideas</p>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Indicadores de scroll -->
+    <div class="scroll-indicators">
+        <div class="indicator active" data-index="0"></div>
+        <div class="indicator" data-index="1"></div>
+        <div class="indicator" data-index="2"></div>
+    </div>
+    
+    <!-- Controles de navegação -->
+    <div class="nav-controls">
+        <div class="nav-btn" id="prev-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+            </svg>
+        </div>
+        <div class="nav-btn" id="next-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            </svg>
         </div>
     </div>
-
-    <section class="horizontal-section section-1">
-        <div class="horizontal-bg" style="background-image: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80')"></div>
-        <div class="horizontal-wrapper">
-            <div class="horizontal-item">
-                <h2 class="horizontal-title">
-                    <span class="text-mask">Immersive</span>
-                </h2>
-            </div>
-            <div class="horizontal-item">
-                <h2 class="horizontal-title">
-                    <span class="text-mask">Experience</span>
-                </h2>
-            </div>
+    
+    <!-- Controle de pausar/play -->
+    <div class="pause-play">
+        <div class="nav-btn" id="pause-play-btn">
+            <svg id="pause-icon" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+            <svg id="play-icon" viewBox="0 0 24 24" style="display: none;">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
         </div>
-    </section>
-
-    <section class="horizontal-section section-2">
-        <div class="horizontal-bg" style="background-image: url('https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80')"></div>
-        <div class="horizontal-wrapper">
-            <div class="horizontal-item">
-                <h2 class="horizontal-title">
-                    <span class="text-mask">Creative</span>
-                </h2>
-            </div>
-            <div class="horizontal-item">
-                <h2 class="horizontal-title">
-                    <span class="text-mask">Solutions</span>
-                </h2>
-            </div>
-        </div>
-    </section>
+    </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     
     <script>
-        gsap.registerPlugin(ScrollTrigger);
-        
-        // Timeline principal
-        const master = gsap.timeline();
-        
-        // 1. Animação da máscara de gradiente
-        master.from(".hero .text-mask::before", {
-            width: 0,
-            duration: 2,
-            ease: "power4.inOut"
-        });
-        
-        // 2. Animação do texto principal
-        master.to(".hero .main-title", {
-            "-webkit-text-stroke": "1px rgba(255,255,255,0)",
-            color: "white",
-            duration: 1.5,
-            ease: "power2.out"
-        }, "<"); // Animação simultânea
-        
-        // 3. Animação do subtítulo
-        master.from(".hero .subtitle", {
-            opacity: 0,
-            y: 30,
-            duration: 1,
-            ease: "elastic.out(1, 0.5)"
-        }, "-=1"); // Começa 1s antes do fim
-        
-        // Efeito parallax no background
-        gsap.to(".hero-bg", {
-            y: "-20%",
-            scrollTrigger: {
-                trigger: ".hero",
-                start: "top top",
-                end: "bottom top",
-                scrub: true
-            }
-        });
-        
-        // Efeito letra por letra
-        const textMask = document.querySelector(".hero .text-mask");
-        textMask.innerHTML = textMask.textContent.split('').map(letter => 
-            `<span style="display:inline-block;">${letter === ' ' ? '&nbsp;' : letter}</span>`
-        ).join('');
-        
-        gsap.from(".hero .text-mask span", {
-            y: "100%",
-            opacity: 0,
-            duration: 0.5,
-            stagger: 0.05,
-            ease: "back.out(3)",
-            delay: 0.5
-        });
-
-        // Configuração das seções horizontais
-        document.querySelectorAll('.horizontal-section').forEach((section, index) => {
-            const wrapper = section.querySelector('.horizontal-wrapper');
-            const items = section.querySelectorAll('.horizontal-item');
-            const textMasks = section.querySelectorAll('.text-mask');
-            
-            // Configura o efeito de scroll horizontal
-            gsap.to(wrapper, {
-                x: () => -(wrapper.scrollWidth - document.documentElement.clientWidth) + "px",
-                ease: "none",
-                scrollTrigger: {
-                    trigger: section,
-                    start: "top top",
-                    end: () => "+=" + (wrapper.scrollWidth - document.documentElement.clientWidth),
-                    pin: true,
-                    scrub: 1,
-                    invalidateOnRefresh: true
-                }
-            });
-            
-            // Configura o efeito de texto para cada palavra
-            items.forEach((item, i) => {
-                // Efeito letra por letra
-                const mask = item.querySelector('.text-mask');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prepara o efeito letra por letra para todos os textos
+            document.querySelectorAll('.text-mask').forEach(mask => {
                 mask.innerHTML = mask.textContent.split('').map(letter => 
                     `<span style="display:inline-block;">${letter === ' ' ? '&nbsp;' : letter}</span>`
                 ).join('');
-                
-                // Animação do texto
-                ScrollTrigger.create({
-                    trigger: item,
-                    start: "left 75%",
-                    onEnter: () => animateText(item),
-                    once: true
-                });
             });
             
-            // Função para animar o texto
-            function animateText(item) {
-                const mask = item.querySelector('.text-mask');
-                const letters = mask.querySelectorAll('span');
-                
-                // Timeline para a animação
-                const tl = gsap.timeline();
-                
-                tl.fromTo(mask.querySelector('::before'), {
-                    width: 0
-                }, {
-                    width: '100%',
-                    duration: 1.5,
-                    ease: "power4.inOut"
+            // Elementos principais
+            const scroller = document.getElementById('scroller');
+            const sections = document.querySelectorAll('.section');
+            const indicators = document.querySelectorAll('.indicator');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const pausePlayBtn = document.getElementById('pause-play-btn');
+            const pauseIcon = document.getElementById('pause-icon');
+            const playIcon = document.getElementById('play-icon');
+            
+            // Variáveis de controle
+            let currentIndex = 0;
+            let autoScrollInterval;
+            let isAutoScrolling = true;
+            let isAnimating = false;
+            const sectionCount = sections.length;
+            const scrollDuration = 1000; // Duração da animação de scroll em ms
+            const autoScrollDelay = 5000; // Tempo entre cada scroll automático em ms
+            
+            // Inicia o scroll automático
+            startAutoScroll();
+            
+            // Animação quando a seção entra em view
+            sections.forEach((section, index) => {
+                // Cria uma timeline para cada seção
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top center",
+                        end: "bottom center",
+                        toggleActions: "play none none none",
+                        scrub: false,
+                        markers: false,
+                        onEnter: () => updateCurrentIndex(index)
+                    }
                 });
                 
-                tl.to(item.querySelector('.horizontal-title'), {
+                // Animação do gradiente
+                tl.fromTo(section.querySelector('.text-mask::before'), 
+                    { width: 0 },
+                    { width: '100%', duration: 1.5, ease: "power4.inOut" },
+                    0
+                );
+                
+                // Animação do texto principal
+                tl.to(section.querySelector('.main-title'), {
                     "-webkit-text-stroke": "1px rgba(255,255,255,0)",
                     color: "white",
                     duration: 1,
                     ease: "power2.out"
-                }, "-=1");
+                }, 0);
                 
-                tl.from(letters, {
+                // Animação letra por letra
+                tl.from(section.querySelectorAll('.text-mask span'), {
                     y: "100%",
                     opacity: 0,
                     duration: 0.5,
                     stagger: 0.05,
                     ease: "back.out(3)"
-                }, "-=0.5");
+                }, 0.3);
+                
+                // Animação do subtítulo
+                tl.from(section.querySelector('.subtitle'), {
+                    opacity: 0,
+                    y: 30,
+                    duration: 1,
+                    ease: "elastic.out(1, 0.5)"
+                }, 0.8);
+            });
+            
+            // Atualiza o índice atual e os indicadores
+            function updateCurrentIndex(index) {
+                currentIndex = index;
+                updateIndicators();
             }
+            
+            // Atualiza os indicadores visuais
+            function updateIndicators() {
+                indicators.forEach((indicator, i) => {
+                    if (i === currentIndex) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Navega para uma seção específica
+            function goToSection(index) {
+                if (isAnimating || index < 0 || index >= sectionCount) return;
+                
+                isAnimating = true;
+                currentIndex = index;
+                
+                // Scroll suave para a seção
+                scroller.scrollTo({
+                    left: index * scroller.clientWidth,
+                    behavior: 'smooth'
+                });
+                
+                // Atualiza indicadores
+                updateIndicators();
+                
+                // Reinicia o temporizador de scroll automático
+                if (isAutoScrolling) {
+                    restartAutoScroll();
+                }
+                
+                // Permite nova animação após um tempo
+                setTimeout(() => {
+                    isAnimating = false;
+                }, scrollDuration);
+            }
+            
+            // Navegação pelos botões
+            prevBtn.addEventListener('click', () => {
+                goToSection((currentIndex - 1 + sectionCount) % sectionCount);
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                goToSection((currentIndex + 1) % sectionCount);
+            });
+            
+            // Navegação pelos indicadores
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    goToSection(index);
+                });
+            });
+            
+            // Controle de pausar/play
+            pausePlayBtn.addEventListener('click', toggleAutoScroll);
+            
+            // Inicia o scroll automático
+            function startAutoScroll() {
+                if (autoScrollInterval) clearInterval(autoScrollInterval);
+                
+                autoScrollInterval = setInterval(() => {
+                    if (isAutoScrolling) {
+                        goToSection((currentIndex + 1) % sectionCount);
+                    }
+                }, autoScrollDelay);
+                
+                // Mostra ícone de pausa
+                pauseIcon.style.display = 'block';
+                playIcon.style.display = 'none';
+            }
+            
+            // Reinicia o scroll automático
+            function restartAutoScroll() {
+                if (autoScrollInterval) clearInterval(autoScrollInterval);
+                startAutoScroll();
+            }
+            
+            // Alterna entre pausar e continuar o scroll automático
+            function toggleAutoScroll() {
+                isAutoScrolling = !isAutoScrolling;
+                
+                if (isAutoScrolling) {
+                    startAutoScroll();
+                    pauseIcon.style.display = 'block';
+                    playIcon.style.display = 'none';
+                } else {
+                    clearInterval(autoScrollInterval);
+                    pauseIcon.style.display = 'none';
+                    playIcon.style.display = 'block';
+                }
+            }
+            
+            // Pausa o scroll automático quando o mouse está sobre o scroller
+            scroller.addEventListener('mouseenter', () => {
+                if (isAutoScrolling) {
+                    toggleAutoScroll();
+                }
+            });
+            
+            // Continua o scroll automático quando o mouse sai do scroller
+            scroller.addEventListener('mouseleave', () => {
+                if (!isAutoScrolling) {
+                    toggleAutoScroll();
+                }
+            });
+            
+            // Detecta mudanças no scroll manual
+            scroller.addEventListener('scroll', function() {
+                const scrollPos = scroller.scrollLeft;
+                const sectionWidth = scroller.clientWidth;
+                const newIndex = Math.round(scrollPos / sectionWidth);
+                
+                if (newIndex !== currentIndex) {
+                    currentIndex = newIndex;
+                    updateIndicators();
+                    
+                    // Reinicia o temporizador se estiver em auto scroll
+                    if (isAutoScrolling) {
+                        restartAutoScroll();
+                    }
+                }
+            });
         });
     </script>
 </body>
